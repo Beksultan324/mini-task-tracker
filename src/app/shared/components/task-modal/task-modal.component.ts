@@ -1,62 +1,21 @@
-import { Component, EventEmitter, OnInit, Output, inject } from "@angular/core";
+import { Component, EventEmitter, Inject, OnInit, Output, inject } from "@angular/core";
 import { StandaloneComponentModule } from "../../modules/standalone-component.module";
-import { PriorityEnum, StatusEnum, TaskData } from "src/app/task/task-table/task-table.component";
+import { PriorityEnum, StatusEnum, Task } from "src/app/task/task-table/task-table.component";
 import { FormBuilder, FormGroup, Validators } from "@angular/forms";
 import { Subject } from "rxjs";
+import { MAT_DIALOG_DATA } from "@angular/material/dialog";
+import { taskFormFactory } from "./task-form";
+
+const USERS = [
+  { id: 1, name: "Tom" },
+  { id: 2, name: "Loky" },
+];
 
 @Component({
   selector: "app-task-modal",
   standalone: true,
   imports: [StandaloneComponentModule],
-  template: `
-    <h2 mat-dialog-title>Create task</h2>
-    <mat-dialog-content class="mat-typography">
-      <form [formGroup]="form" class="form">
-        <mat-form-field>
-          <mat-label>Name</mat-label>
-          <input matInput formControlName="name" />
-        </mat-form-field>
-        <mat-form-field>
-          <mat-label>Deadline</mat-label>
-          <input matInput formControlName="deadline" />
-        </mat-form-field>
-        <mat-form-field>
-          <mat-label>Priority</mat-label>
-          <mat-select formControlName="priority">
-            <mat-option [value]="PriorityEnum.No">-</mat-option>
-            <mat-option [value]="PriorityEnum.Low">Low</mat-option>
-            <mat-option [value]="PriorityEnum.Medium">Medium</mat-option>
-            <mat-option [value]="PriorityEnum.High">High</mat-option>
-          </mat-select>
-        </mat-form-field>
-        <mat-form-field>
-          <mat-label>Status</mat-label>
-          <mat-select formControlName="status">
-            <mat-option [value]="StatusEnum.No">-</mat-option>
-            <mat-option [value]="StatusEnum.OnTrack">On Track</mat-option>
-            <mat-option [value]="StatusEnum.AtRisk">At Risk</mat-option>
-            <mat-option [value]="StatusEnum.OffTrack">Off Track</mat-option>
-          </mat-select>
-        </mat-form-field>
-        <mat-form-field>
-          <mat-label>Executors</mat-label>
-          <input matInput formControlName="executors" />
-        </mat-form-field>
-      </form>
-    </mat-dialog-content>
-    <mat-dialog-actions align="center">
-      <button mat-button mat-dialog-close>Cancel</button>
-      <button
-        mat-button
-        [mat-dialog-close]="true"
-        [disabled]="form.invalid"
-        (click)="onSubmit()"
-        cdkFocusInitial
-      >
-        Install
-      </button>
-    </mat-dialog-actions>
-  `,
+  templateUrl: "./task-modal.component.html",
   styles: [
     `
       .form {
@@ -71,21 +30,16 @@ import { Subject } from "rxjs";
   ],
 })
 export class TaskModalComponent implements OnInit {
-  private _submit$ = new Subject<TaskData>();
-  submit = this._submit$.asObservable();
+  private _submit$ = new Subject<Task>();
+  public submit = this._submit$.asObservable();
   readonly PriorityEnum = PriorityEnum;
   readonly StatusEnum = StatusEnum;
-  private readonly fb = inject(FormBuilder);
+  readonly executors = USERS;
   form: FormGroup;
 
-  constructor(fb: FormBuilder) {
-    this.form = this.fb.group({
-      name: ["", Validators.required],
-      deadline: ["", Validators.required],
-      priority: [null],
-      status: [null],
-      executors: [null],
-    });
+  constructor(public fb: FormBuilder, @Inject(MAT_DIALOG_DATA) public data?: { task: Task }) {
+    const task = data?.task;
+    this.form = taskFormFactory(fb, task ?? null);
   }
 
   ngOnInit(): void {}

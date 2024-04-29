@@ -1,0 +1,29 @@
+{
+  "tasks": [
+    {
+      "id": 2,
+      "name": "Tom's task",
+      "deadline": "2024-04-16T18:00:00.000Z",
+      "priority": "Medium",
+      "status": "Off Track",
+      "executors": [
+        {
+          "id": 1,
+          "name": "Tom"
+        },
+        {
+          "id": 2,
+          "name": "Loky"
+        }
+      ]
+    },
+    {
+      "id": 3,
+      "name": "DSN",
+      "deadline": "2024-04-24T18:00:00.000Z",
+      "priority": "High",
+      "status": "Off Track",
+      "executors": null
+    }
+  ]
+}

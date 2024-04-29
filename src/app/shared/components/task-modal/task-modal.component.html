@@ -1,0 +1,54 @@
+<h2 mat-dialog-title>{{ data?.task?.id ? "Edit Task" : "Create Task" }}</h2>
+<mat-dialog-content class="mat-typography">
+  <form [formGroup]="form" class="form">
+    <mat-form-field>
+      <mat-label>Name</mat-label>
+      <input matInput formControlName="name" />
+    </mat-form-field>
+    <mat-form-field>
+      <mat-label>Deadline</mat-label>
+      <input matInput [matDatepicker]="picker" formControlName="deadline" />
+      <mat-hint>MM/DD/YYYY</mat-hint>
+      <mat-datepicker-toggle matIconSuffix [for]="picker"></mat-datepicker-toggle>
+      <mat-datepicker #picker></mat-datepicker>
+    </mat-form-field>
+    <mat-form-field>
+      <mat-label>Priority</mat-label>
+      <mat-select formControlName="priority">
+        <mat-option [value]="PriorityEnum.No">-</mat-option>
+        <mat-option [value]="PriorityEnum.Low">Low</mat-option>
+        <mat-option [value]="PriorityEnum.Medium">Medium</mat-option>
+        <mat-option [value]="PriorityEnum.High">High</mat-option>
+      </mat-select>
+    </mat-form-field>
+    <mat-form-field>
+      <mat-label>Status</mat-label>
+      <mat-select formControlName="status">
+        <mat-option [value]="StatusEnum.No">-</mat-option>
+        <mat-option [value]="StatusEnum.OnTrack">On Track</mat-option>
+        <mat-option [value]="StatusEnum.AtRisk">At Risk</mat-option>
+        <mat-option [value]="StatusEnum.OffTrack">Off Track</mat-option>
+      </mat-select>
+    </mat-form-field>
+    <mat-form-field>
+      <mat-label>Executors</mat-label>
+      <mat-select formControlName="executors" multiple>
+        <mat-option *ngFor="let executor of executors" [value]="executor">{{
+          executor.name
+        }}</mat-option>
+      </mat-select>
+    </mat-form-field>
+  </form>
+</mat-dialog-content>
+<mat-dialog-actions align="center">
+  <button mat-button mat-dialog-close>Cancel</button>
+  <button
+    mat-button
+    [mat-dialog-close]="true"
+    [disabled]="form.invalid"
+    (click)="onSubmit()"
+    cdkFocusInitial
+  >
+    {{ "Save" }}
+  </button>
+</mat-dialog-actions>
